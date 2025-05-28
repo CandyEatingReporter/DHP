@@ -1,4 +1,4 @@
-plwAlet pelicanX;
+let pelicanX;
 let pelicanY;
 let speedX;
 let speedY;
