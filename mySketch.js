@@ -1,16 +1,19 @@
 let pelicanX;
 let pelicanY;
 let speedX;
+let speedY;
 let direction = 1;
 
 let trail = [];
 let clouds = [];
+let keys = {};
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  pelicanX = 0;
+  pelicanX = width / 2;
   pelicanY = height * 0.7;
-  speedX = 2;
+  speedX = 3;
+  speedY = 3;
 
   // Create initial clouds
   for (let i = 0; i < 5; i++) {
@@ -38,16 +41,17 @@ function draw() {
 
   drawPelicanOnBike(pelicanX, pelicanY);
 
-  // update pelican position
-  pelicanX += speedX * direction;
+  // Handle user input
+  handleInput();
 
-  // Add trail puff
-  trail.push({ x: pelicanX, y: pelicanY + 35, alpha: 255 });
-
-  // Reverse direction at edges
-  if (pelicanX > width + 100 || pelicanX < -100) {
-    direction *= -1;
+  // Add trail puff only when moving
+  if (keys['ArrowLeft'] || keys['ArrowRight'] || keys['ArrowUp'] || keys['ArrowDown']) {
+    trail.push({ x: pelicanX, y: pelicanY + 35, alpha: 255 });
   }
+
+  // Keep pelican within bounds
+  pelicanX = constrain(pelicanX, 50, width - 50);
+  pelicanY = constrain(pelicanY, 50, height * 0.8 - 50);
 
   // Limit trail length
   if (trail.length > 100) {
@@ -118,6 +122,33 @@ function drawPelicanOnBike(x, y) {
   line(10, -10, 20, 30);
 
   pop();
+}
+
+function handleInput() {
+  if (keys['ArrowLeft']) {
+    pelicanX -= speedX;
+    direction = -1; // face left
+  }
+  if (keys['ArrowRight']) {
+    pelicanX += speedX;
+    direction = 1; // face right
+  }
+  if (keys['ArrowUp']) {
+    pelicanY -= speedY;
+  }
+  if (keys['ArrowDown']) {
+    pelicanY += speedY;
+  }
+}
+
+function keyPressed() {
+  keys[key] = true;
+  keys[keyCode] = true;
+}
+
+function keyReleased() {
+  keys[key] = false;
+  keys[keyCode] = false;
 }
 
 function windowResized() {
